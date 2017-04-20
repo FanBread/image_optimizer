@@ -13,7 +13,7 @@ describe ImageOptimizer::JPEGOptimizer do
       end
 
       it 'optimizes the jpeg' do
-        optimizer_options = %w[-f --strip-all --all-progressive /path/to/file.jpg]
+        optimizer_options = %w[-f --all-progressive --strip-all /path/to/file.jpg]
         expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
         subject
       end
@@ -28,7 +28,7 @@ describe ImageOptimizer::JPEGOptimizer do
         end
 
         it 'should optimize using the given path' do
-          optimizer_options = %w[-f --strip-all --all-progressive /path/to/file.jpg]
+          optimizer_options = %w[-f --all-progressive --strip-all /path/to/file.jpg]
           expect(jpeg_optimizer).to receive(:system).with(image_optim_jpegoptim_bin_path, *optimizer_options)
           subject
         end
@@ -38,7 +38,7 @@ describe ImageOptimizer::JPEGOptimizer do
         let(:options) { { :quality => 50 } }
 
         it 'optimizes the jpeg with the quality' do
-          optimizer_options = %w[-f --strip-all --all-progressive --max=50 /path/to/file.jpg]
+          optimizer_options = %w[-f --all-progressive --max=50 --strip-all /path/to/file.jpg]
           expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
           subject
         end
@@ -48,7 +48,25 @@ describe ImageOptimizer::JPEGOptimizer do
         let(:options) { { :quiet => true } }
 
         it 'accepts an optional quiet parameter' do
-          optimizer_options = %w[-f --strip-all --all-progressive --quiet /path/to/file.jpg]
+          optimizer_options = %w[-f --all-progressive --strip-all --quiet /path/to/file.jpg]
+          expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
+          subject
+        end
+      end
+
+      context 'with strip metadata objects parameter' do
+        let(:options) { { strip_metadata: true } }
+        it 'does not remove the requested metadata objects from the jpg' do
+          optimizer_options = %w[-f --all-progressive --strip-all /path/to/file.jpg]
+          expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
+          subject
+        end
+      end
+
+      context 'without strip metadata objects parameter' do
+        let(:options) { { strip_metadata: false } }
+        it 'does not remove the requested metadata objects from the jpg' do
+          optimizer_options = %w[-f --all-progressive /path/to/file.jpg]
           expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
           subject
         end
