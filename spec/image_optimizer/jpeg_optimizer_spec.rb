@@ -56,7 +56,7 @@ describe ImageOptimizer::JPEGOptimizer do
 
       context 'with strip metadata objects parameter' do
         let(:options) { { strip_metadata: true } }
-        it 'does not remove the requested metadata objects from the jpg' do
+        it 'removes the requested metadata objects from the jpg' do
           optimizer_options = %w[-f --all-progressive --strip-all /path/to/file.jpg]
           expect(jpeg_optimizer).to receive(:system).with('/usr/local/bin/jpegoptim', *optimizer_options)
           subject
